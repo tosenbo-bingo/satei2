@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+<title>査定ノート</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12141f;
+    --ink-2:#191c2c;
+    --ink-3:#232743;
+    --parchment:#f1e7ca;
+    --parchment-2:#e7d9ac;
+    --ink-text:#211d13;
+    --cream-text:#f2ede1;
+    --muted:#9296ab;
+    --muted-2:#5c5f74;
+    --gold:#dfae3a;
+    --gold-2:#f6d878;
+    --teal:#2f8f78;
+    --teal-2:#39a88d;
+    --brick:#c1503f;
+    --radius-lg:20px;
+    --radius-md:14px;
+    --radius-sm:9px;
+    --font-display:'Space Grotesk', sans-serif;
+    --font-body:'Inter', sans-serif;
+    --font-mono:'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #1c2036 0%, var(--ink) 55%) fixed;
+    color:var(--cream-text);
+    font-family:var(--font-body);
+    min-height:100vh;
+    -webkit-tap-highlight-color:transparent;
+    padding-bottom:100px;
+  }
+  .wrap{max-width:480px;margin:0 auto;padding:0 16px;}
+
+  /* ---------- Header ---------- */
+  header.top{
+    padding:28px 16px 18px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .stack-icon{
+    width:38px;height:38px;flex:none;position:relative;
+  }
+  .stack-icon span{
+    position:absolute;inset:0;border-radius:7px;
+    border:2px solid var(--gold);
+  }
+  .stack-icon span:nth-child(1){transform:rotate(-8deg);opacity:.45;}
+  .stack-icon span:nth-child(2){transform:rotate(6deg);opacity:.7;}
+  .stack-icon span:nth-child(3){background:var(--ink-3);}
+  h1{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:22px;
+    margin:0;
+    letter-spacing:.01em;
+  }
+  .subtitle{
+    margin:2px 0 0;
+    font-size:12.5px;
+    color:var(--muted);
+    letter-spacing:.02em;
+  }
+
+  /* ---------- Section label ---------- */
+  .section-label{
+    font-family:var(--font-display);
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin:0 0 10px 2px;
+  }
+
+  /* ---------- Stores bar ---------- */
+  section.stores{margin-top:6px;margin-bottom:22px;}
+  .stores-row{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding:2px 2px 8px;
+    scrollbar-width:none;
+  }
+  .stores-row::-webkit-scrollbar{display:none;}
+  .chip{
+    flex:none;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:var(--ink-3);
+    border:1px solid #2d3252;
+    color:var(--cream-text);
+    padding:8px 12px;
+    border-radius:999px;
+    font-size:13.5px;
+    font-weight:500;
+    white-space:nowrap;
+  }
+  .chip .x{
+    color:var(--brick);
+    font-weight:700;
+    font-size:14px;
+    line-height:1;
+    padding-left:2px;
+  }
+  .chip-add{
+    flex:none;
+    display:flex;align-items:center;gap:6px;
+    background:transparent;
+    border:1px dashed #454b74;
+    color:var(--muted);
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:13.5px;
+    font-weight:600;
+  }
+  .stores-tools{
+    display:flex;justify-content:flex-end;margin-top:2px;
+  }
+  .link-btn{
+    background:none;border:none;color:var(--muted);
+    font-size:12px;font-family:var(--font-body);
+    text-decoration:underline;text-underline-offset:2px;
+    padding:4px;
+  }
+  .add-store-form{
+    display:flex;gap:8px;margin-top:10px;
+  }
+  .add-store-form input{
+    flex:1;
+  }
+  .add-store-form button{
+    flex:none;
+  }
+
+  /* ---------- Summary banner ---------- */
+  .summary{
+    background:linear-gradient(135deg, #22301f 0%, #1a2418 100%);
+    border:1px solid #33472f;
+    border-radius:var(--radius-lg);
+    padding:16px 18px;
+    margin-bottom:24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .summary.empty{
+    background:var(--ink-2);
+    border:1px solid #262a44;
+  }
+  .summary .label{
+    font-size:11.5px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:#9fcf9a;
+    margin:0 0 4px;
+  }
+  .summary.empty .label{color:var(--muted);}
+  .summary .store-name{
+    font-family:var(--font-display);
+    font-size:19px;
+    font-weight:700;
+    margin:0;
+  }
+  .summary .amount{
+    font-family:var(--font-mono);
+    font-size:20px;
+    font-weight:700;
+    color:var(--gold-2);
+    text-align:right;
+  }
+
+  /* ---------- Card list ---------- */
+  .empty-state{
+    text-align:center;
+    color:var(--muted);
+    font-size:13.5px;
+    padding:50px 20px;
+    line-height:1.7;
+  }
+  .card-entry{
+    background:var(--parchment);
+    color:var(--ink-text);
+    border-radius:var(--radius-lg);
+    padding:16px 16px 14px;
+    margin-bottom:14px;
+    box-shadow:0 8px 22px -10px rgba(0,0,0,.55);
+    position:relative;
+    border:1px solid var(--parchment-2);
+  }
+  .card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:8px;
+    margin-bottom:10px;
+  }
+  .card-titles{flex:1;min-width:0;}
+  .card-name{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:16.5px;
+    background:transparent;
+    border:none;
+    width:100%;
+    padding:2px 0;
+    color:var(--ink-text);
+  }
+  .card-name:focus{outline:none;border-bottom:1.5px solid var(--gold);}
+  .card-cond{
+    font-size:12px;
+    background:transparent;
+    border:none;
+    width:100%;
+    padding:1px 0 0;
+    color:#6b6448;
+  }
+  .card-cond:focus{outline:none;border-bottom:1px dashed var(--gold);}
+  .card-del{
+    flex:none;
+    background:none;border:none;
+    color:#a8623f;
+    font-size:12px;
+    padding:6px 2px;
+    font-family:var(--font-body);
+    opacity:.75;
+  }
+
+  .best-tag{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    background:linear-gradient(100deg, var(--gold), var(--gold-2), var(--gold));
+    color:#3a2905;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.03em;
+    padding:4px 9px;
+    border-radius:999px;
+    margin-bottom:10px;
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .best-tag{background-size:200% auto;animation:shine 3.5s linear infinite;}
+  }
+  @keyframes shine{
+    0%{background-position:0% 50%;}
+    100%{background-position:200% 50%;}
+  }
+
+  .price-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:8px 2px;
+    border-top:1px solid #ddcf9f;
+  }
+  .price-row:first-of-type{border-top:none;}
+  .price-store{
+    font-size:13.5px;
+    font-weight:600;
+    color:#4a4530;
+    flex:1;
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .price-row.is-best .price-store{color:#7a5c0c;}
+  .price-input-wrap{
+    display:flex;
+    align-items:center;
+    background:#fbf6e6;
+    border:1px solid #dccf9e;
+    border-radius:var(--radius-sm);
+    padding:0 4px 0 10px;
+    flex:none;
+  }
+  .price-row.is-best .price-input-wrap{
+    background:#fff6d9;
+    border-color:var(--gold);
+  }
+  .price-input-wrap span{
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    color:#9a8d5c;
+  }
+  .price-input{
+    width:88px;
+    text-align:right;
+    border:none;
+    background:transparent;
+    font-family:var(--font-mono);
+    font-size:14.5px;
+    font-weight:700;
+    color:var(--ink-text);
+    padding:9px 4px;
+  }
+  .price-input:focus{outline:none;}
+
+  .no-stores-msg{
+    font-size:12.5px;
+    color:#8a7f56;
+    padding:8px 2px;
+  }
+
+  /* ---------- FAB ---------- */
+  .fab{
+    position:fixed;
+    right:20px;
+    bottom:26px;
+    width:58px;height:58px;
+    border-radius:50%;
+    background:linear-gradient(150deg, var(--teal-2), var(--teal));
+    border:none;
+    box-shadow:0 10px 26px -8px rgba(47,143,120,.65);
+    color:#eafff8;
+    font-size:28px;
+    font-weight:400;
+    display:flex;align-items:center;justify-content:center;
+    z-index:40;
+  }
+  .fab:active{transform:scale(.94);}
+
+  /* ---------- Sheet / modal ---------- */
+  .overlay{
+    position:fixed;inset:0;
+    background:rgba(8,9,16,.55);
+    display:none;
+    align-items:flex-end;
+    z-index:50;
+  }
+  .overlay.show{display:flex;}
+  .sheet{
+    width:100%;
+    max-width:480px;
+    margin:0 auto;
+    background:var(--ink-2);
+    border-radius:22px 22px 0 0;
+    padding:20px 20px calc(24px + env(safe-area-inset-bottom));
+    border-top:1px solid #2c3151;
+  }
+  .sheet h2{
+    font-family:var(--font-display);
+    font-size:17px;
+    margin:0 0 14px;
+  }
+  .field{margin-bottom:12px;}
+  .field label{
+    display:block;
+    font-size:11.5px;
+    color:var(--muted);
+    letter-spacing:.05em;
+    margin-bottom:5px;
+  }
+  input[type=text], input[type=tel]{
+    width:100%;
+    background:var(--ink-3);
+    border:1px solid #343a5c;
+    color:var(--cream-text);
+    border-radius:var(--radius-sm);
+    padding:11px 12px;
+    font-size:15px;
+    font-family:var(--font-body);
+  }
+  input::placeholder{color:#585c76;}
+  input:focus{outline:none;border-color:var(--teal-2);}
+  .sheet-actions{
+    display:flex;gap:10px;margin-top:16px;
+  }
+  .btn{
+    border:none;
+    border-radius:999px;
+    padding:12px 18px;
+    font-size:14.5px;
+    font-weight:700;
+    font-family:var(--font-body);
+    flex:1;
+  }
+  .btn-primary{background:linear-gradient(150deg, var(--teal-2), var(--teal));color:#eafff8;}
+  .btn-ghost{background:transparent;border:1px solid #3a3f61;color:var(--muted);}
+  .btn:active{opacity:.85;}
+
+  .toast{
+    position:fixed;
+    left:50%;bottom:100px;
+    transform:translateX(-50%) translateY(20px);
+    background:#232743;
+    color:var(--cream-text);
+    padding:10px 16px;
+    border-radius:999px;
+    font-size:12.5px;
+    border:1px solid #343a5c;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;
+    z-index:60;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="stack-icon"><span></span><span></span><span></span></div>
+    <div>
+      <h1>査定ノート</h1>
+      <p class="subtitle">カード買取 見積もり比較</p>
+    </div>
+  </header>
+
+  <section class="stores">
+    <p class="section-label">比較する店舗</p>
+    <div class="stores-row" id="storesRow"></div>
+    <div class="stores-tools">
+      <button class="link-btn" id="editStoresBtn">店舗を編集</button>
+    </div>
+    <div class="add-store-form" id="addStoreForm" style="display:none;">
+      <input type="text" id="newStoreInput" placeholder="店舗名を入力（例：〇〇TCG）" maxlength="20">
+      <button class="btn btn-primary" id="confirmAddStore" style="flex:none;">追加</button>
+    </div>
+  </section>
+
+  <p class="section-label">合計が一番高い店舗</p>
+  <div class="summary" id="summaryBox"></div>
+
+  <p class="section-label">カード一覧</p>
+  <div id="cardsList"></div>
+</div>
+
+<button class="fab" id="fabAdd">＋</button>
+
+<div class="overlay" id="cardOverlay">
+  <div class="sheet">
+    <h2>カードを追加</h2>
+    <div class="field">
+      <label>カード名</label>
+      <input type="text" id="newCardName" placeholder="例：リザードンex SAR" maxlength="40">
+    </div>
+    <div class="field">
+      <label>状態（任意）</label>
+      <input type="text" id="newCardCond" placeholder="例：美品・角欠け無し" maxlength="40">
+    </div>
+    <div class="sheet-actions">
+      <button class="btn btn-ghost" id="cancelAddCard">キャンセル</button>
+      <button class="btn btn-primary" id="confirmAddCard">追加する</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'assessment-state-v1';
+  let state = { stores: [], cards: [] };
+  let editingStores = false;
+  let persistDisabled = false;
+  let hasWarnedNoPersist = false;
+
+  const uid = () => Math.random().toString(36).slice(2,9) + Date.now().toString(36).slice(-4);
+
+  const seed = () => ({
+    stores: [
+      { id: uid(), name: 'カードラッシュ' },
+      { id: uid(), name: '駿河屋' },
+      { id: uid(), name: '遊々亭' }
+    ],
+    cards: []
+  });
+
+  // Claudeのプレビュー内では window.storage（クラウド保存）を、
+  // GitHub Pages など外部で開いた場合はブラウザの localStorage を使う。
+  function hasCloudStorage(){
+    return typeof window.storage !== 'undefined'
+      && typeof window.storage.get === 'function'
+      && typeof window.storage.set === 'function';
+  }
+  function hasLocalStorage(){
+    try{
+      const t = '__test__';
+      window.localStorage.setItem(t, '1');
+      window.localStorage.removeItem(t);
+      return true;
+    }catch(e){ return false; }
+  }
+
+  async function storageGet(key){
+    if(hasCloudStorage()){
+      return await window.storage.get(key, false);
+    }
+    const raw = window.localStorage.getItem(key);
+    return raw === null ? null : { key, value: raw, shared:false };
+  }
+  async function storageSet(key, value){
+    if(hasCloudStorage()){
+      return await window.storage.set(key, value, false);
+    }
+    window.localStorage.setItem(key, value);
+    return { key, value, shared:false };
+  }
+
+  async function load(){
+    if(!hasCloudStorage() && !hasLocalStorage()){
+      persistDisabled = true;
+      state = seed();
+      renderAll();
+      showToast('この環境では自動保存が使えません（入力内容は閉じると消えます）');
+      return;
+    }
+    try{
+      const res = await storageGet(STORAGE_KEY);
+      if(res && res.value){
+        state = JSON.parse(res.value);
+        if(!state.stores) state.stores = [];
+        if(!state.cards) state.cards = [];
+      } else {
+        state = seed();
+        await persist();
+      }
+    }catch(e){
+      state = seed();
+      await persist();
+    }
+    renderAll();
+  }
+
+  let saveTimer = null;
+  function save(){
+    if(persistDisabled) return;
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(persist, 250);
+  }
+  async function persist(){
+    if(persistDisabled) return;
+    try{
+      await storageSet(STORAGE_KEY, JSON.stringify(state));
+    }catch(e){
+      persistDisabled = true;
+      if(!hasWarnedNoPersist){
+        hasWarnedNoPersist = true;
+        showToast('自動保存できませんでした（このまま入力は続けられます）');
+      }
+    }
+  }
+
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(()=> t.classList.remove('show'), 1600);
+  }
+
+  function fmtYen(n){
+    return '¥' + (n||0).toLocaleString('ja-JP');
+  }
+
+  function bestForCard(card){
+    let bestStoreId = null, bestVal = -1;
+    state.stores.forEach(s => {
+      const v = Number(card.prices[s.id]) || 0;
+      if(v > bestVal && v > 0){ bestVal = v; bestStoreId = s.id; }
+    });
+    return { storeId: bestStoreId, value: bestVal > 0 ? bestVal : 0 };
+  }
+
+  function storeTotals(){
+    const totals = {};
+    state.stores.forEach(s => totals[s.id] = 0);
+    state.cards.forEach(c => {
+      state.stores.forEach(s => {
+        totals[s.id] += Number(c.prices[s.id]) || 0;
+      });
+    });
+    return totals;
+  }
+
+  /* ---------------- Rendering ---------------- */
+
+  function renderAll(){
+    renderStores();
+    renderSummary();
+    renderCards();
+  }
+
+  function renderStores(){
+    const row = document.getElementById('storesRow');
+    row.innerHTML = '';
+    state.stores.forEach(s => {
+      const chip = document.createElement('div');
+      chip.className = 'chip';
+      chip.innerHTML = `<span>${escapeHtml(s.name)}</span>` + (editingStores ? `<span class="x" data-id="${s.id}">×</span>` : '');
+      row.appendChild(chip);
+    });
+    const addChip = document.createElement('button');
+    addChip.className = 'chip-add';
+    addChip.textContent = '＋ 店舗を追加';
+    addChip.onclick = () => {
+      document.getElementById('addStoreForm').style.display = 'flex';
+      document.getElementById('newStoreInput').focus();
+    };
+    row.appendChild(addChip);
+
+    row.querySelectorAll('.x').forEach(x => {
+      x.onclick = (e) => {
+        e.stopPropagation();
+        const id = x.getAttribute('data-id');
+        const store = state.stores.find(s => s.id === id);
+        if(!confirm(`「${store.name}」を削除しますか？入力済みの見積もり額も削除されます。`)) return;
+        state.stores = state.stores.filter(s => s.id !== id);
+        state.cards.forEach(c => { delete c.prices[id]; });
+        save();
+        renderAll();
+      };
+    });
+  }
+
+  function renderSummary(){
+    const box = document.getElementById('summaryBox');
+    if(state.stores.length === 0 || state.cards.length === 0){
+      box.className = 'summary empty';
+      box.innerHTML = `<div><p class="label">まだデータがありません</p><p class="store-name" style="font-size:14px;">店舗とカードを追加してください</p></div>`;
+      return;
+    }
+    const totals = storeTotals();
+    let bestId = null, bestVal = -1;
+    state.stores.forEach(s => { if(totals[s.id] > bestVal){ bestVal = totals[s.id]; bestId = s.id; } });
+    const bestStore = state.stores.find(s => s.id === bestId);
+    box.className = 'summary';
+    box.innerHTML = `
+      <div>
+        <p class="label">合計見積額 最高</p>
+        <p class="store-name">${bestStore ? escapeHtml(bestStore.name) : '-'}</p>
+      </div>
+      <div class="amount">${fmtYen(bestVal)}</div>
+    `;
+  }
+
+  function renderCards(){
+    const list = document.getElementById('cardsList');
+    list.innerHTML = '';
+    if(state.cards.length === 0){
+      list.innerHTML = `<div class="empty-state">まだカードが登録されていません。<br>右下の ＋ ボタンから追加しましょう。</div>`;
+      return;
+    }
+    state.cards.forEach(card => {
+      const best = bestForCard(card);
+      const el = document.createElement('div');
+      el.className = 'card-entry';
+
+      let bestTagHtml = '';
+      if(best.storeId){
+        const bs = state.stores.find(s => s.id === best.storeId);
+        bestTagHtml = `<div class="best-tag">★ 最高額 ${bs ? escapeHtml(bs.name) : ''} ${fmtYen(best.value)}</div>`;
+      }
+
+      let rowsHtml = '';
+      if(state.stores.length === 0){
+        rowsHtml = `<div class="no-stores-msg">上部から比較する店舗を追加してください</div>`;
+      } else {
+        rowsHtml = state.stores.map(s => {
+          const val = card.prices[s.id] || '';
+          const isBest = best.storeId === s.id && best.value > 0;
+          return `
+            <div class="price-row ${isBest ? 'is-best' : ''}">
+              <div class="price-store">${escapeHtml(s.name)}</div>
+              <div class="price-input-wrap">
+                <span>¥</span>
+                <input class="price-input" type="tel" inputmode="numeric" pattern="[0-9]*"
+                  data-card="${card.id}" data-store="${s.id}"
+                  value="${val}" placeholder="0">
+              </div>
+            </div>`;
+        }).join('');
+      }
+
+      el.innerHTML = `
+        <div class="card-top">
+          <div class="card-titles">
+            <input class="card-name" data-card="${card.id}" data-field="name" value="${escapeAttr(card.name)}" placeholder="カード名">
+            <input class="card-cond" data-card="${card.id}" data-field="condition" value="${escapeAttr(card.condition)}" placeholder="状態（任意）">
+          </div>
+          <button class="card-del" data-card="${card.id}">削除</button>
+        </div>
+        ${bestTagHtml}
+        ${rowsHtml}
+      `;
+      list.appendChild(el);
+    });
+
+    // wire up events
+    list.querySelectorAll('.price-input').forEach(inp => {
+      inp.addEventListener('input', () => {
+        inp.value = inp.value.replace(/[^0-9]/g, '');
+        const cardId = inp.getAttribute('data-card');
+        const storeId = inp.getAttribute('data-store');
+        const card = state.cards.find(c => c.id === cardId);
+        card.prices[storeId] = inp.value ? Number(inp.value) : 0;
+        save();
+      });
+      inp.addEventListener('blur', () => { renderCards(); renderSummary(); });
+    });
+    list.querySelectorAll('.card-name, .card-cond').forEach(inp => {
+      inp.addEventListener('input', () => {
+        const cardId = inp.getAttribute('data-card');
+        const field = inp.getAttribute('data-field');
+        const card = state.cards.find(c => c.id === cardId);
+        card[field] = inp.value;
+        save();
+      });
+    });
+    list.querySelectorAll('.card-del').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const cardId = btn.getAttribute('data-card');
+        const card = state.cards.find(c => c.id === cardId);
+        if(!confirm(`「${card.name || 'このカード'}」を削除しますか？`)) return;
+        state.cards = state.cards.filter(c => c.id !== cardId);
+        save();
+        renderAll();
+      });
+    });
+  }
+
+  function escapeHtml(str){
+    return String(str || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+  function escapeAttr(str){ return escapeHtml(str); }
+
+  /* ---------------- Store add/edit controls ---------------- */
+
+  document.getElementById('editStoresBtn').addEventListener('click', () => {
+    editingStores = !editingStores;
+    document.getElementById('editStoresBtn').textContent = editingStores ? '完了' : '店舗を編集';
+    renderStores();
+  });
+
+  document.getElementById('confirmAddStore').addEventListener('click', addStore);
+  document.getElementById('newStoreInput').addEventListener('keydown', (e) => {
+    if(e.key === 'Enter') addStore();
+  });
+  function addStore(){
+    const input = document.getElementById('newStoreInput');
+    const name = input.value.trim();
+    if(!name){ showToast('店舗名を入力してください'); return; }
+    state.stores.push({ id: uid(), name });
+    input.value = '';
+    document.getElementById('addStoreForm').style.display = 'none';
+    save();
+    renderAll();
+    showToast('店舗を追加しました');
+  }
+
+  /* ---------------- Add card sheet ---------------- */
+
+  const cardOverlay = document.getElementById('cardOverlay');
+  document.getElementById('fabAdd').addEventListener('click', () => {
+    cardOverlay.classList.add('show');
+    document.getElementById('newCardName').focus();
+  });
+  document.getElementById('cancelAddCard').addEventListener('click', closeCardSheet);
+  cardOverlay.addEventListener('click', (e) => { if(e.target === cardOverlay) closeCardSheet(); });
+  function closeCardSheet(){
+    cardOverlay.classList.remove('show');
+    document.getElementById('newCardName').value = '';
+    document.getElementById('newCardCond').value = '';
+  }
+  document.getElementById('confirmAddCard').addEventListener('click', () => {
+    const name = document.getElementById('newCardName').value.trim();
+    const cond = document.getElementById('newCardCond').value.trim();
+    if(!name){ showToast('カード名を入力してください'); return; }
+    const prices = {};
+    state.stores.forEach(s => prices[s.id] = 0);
+    state.cards.push({ id: uid(), name, condition: cond, prices });
+    closeCardSheet();
+    save();
+    renderAll();
+    showToast('カードを追加しました');
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>
